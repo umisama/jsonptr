@@ -5,20 +5,10 @@ import (
 	"testing"
 )
 
-var JSONexample = []byte(`{
-		"foo": ["bar", "baz"],
-		"": 0,
-		"a/b": 1,
-		"c%d": 2,
-		"e^f": 3,
-		"g|h": 4,
-		"i\\j": 5,
-		"k\"l": 6,
-		" ": 7,
-		"m~n": 8
-}`)
+var JSONexample = []byte(`{"":0," ":7,"a/b":1,"c%d":2,"e^f":3,"foo":["bar","baz"],"g|h":4,"i\\j":5,"k\"l":6,"m~n":8}`)
 
 var TestCasesForNormal = map[string]string{
+	``:       string(JSONexample),
 	`/foo`:   `["bar","baz"]`,
 	`/foo/0`: `"bar"`,
 	`/`:      `0`,
@@ -33,6 +23,7 @@ var TestCasesForNormal = map[string]string{
 }
 
 var TestCasesForURIEncoded = map[string]string{
+	`#`:       string(JSONexample),
 	`#/foo`:   `["bar","baz"]`,
 	`#/foo/0`: `"bar"`,
 	`#/`:      `0`,
