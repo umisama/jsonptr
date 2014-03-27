@@ -27,44 +27,28 @@ func pathProcessor(path string) (processed []string) {
 	}
 
 	if path[0] == '#' {
-		processed = pathProcessorForURIEncoded(path)
+		processed = pathProcessorSub(path[1:], true)
 	} else {
-		processed = pathProcessorForNormal(path)
+		processed = pathProcessorSub(path, false)
 	}
 
 	return
 }
 
-func pathProcessorForNormal(path string) (processed []string) {
+func pathProcessorSub(path string, uriencode bool) (processed []string) {
 	processed = make([]string, 0)
 	for _, v := range strings.Split(path, "/") {
 		if v == "" {
 			continue
 		}
+
 		reper := strings.NewReplacer("~0", "~", "~1", "/", "\\\\", "\\", "\\\"", "\"")
 		v = reper.Replace(v)
-		processed = append(processed, v)
-	}
 
-	// it pointing empty string attr, if path end with "/".
-	if strings.HasSuffix(path, "/") {
-		processed = append(processed, "")
-	}
-	return
-}
-
-func pathProcessorForURIEncoded(path string) (processed []string) {
-	path = path[1:]
-
-	processed = make([]string, 0)
-	for _, v := range strings.Split(path, "/") {
-		if v == "" {
-			continue
+		if uriencode {
+			v, _ = url.QueryUnescape(v)
 		}
-		reper := strings.NewReplacer("~0", "~", "~1", "/", "\\\\", "\\", "\\\"", "\"")
-		v = reper.Replace(v)
 
-		v, _ = url.QueryUnescape(v)
 		processed = append(processed, v)
 	}
 
